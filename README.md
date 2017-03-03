@@ -19,7 +19,7 @@ The Outputs are winning or losing, and whether or not to increase the bank (init
 
 I would like to develop my own deck of cards, but in the meantime I will use the Deck of Cards API https://deckofcardsapi.com/ 
 
-Technologies used, in addition to jQuery I will be using an external library to assist in animating (flipping cards). In addition I have found an open source vector playing card set.
+Technologies used, in addition to jQuery I will be using an external library to assist in animating (flipping cards). In addition I have found an open source vector playing card set. https://sourceforge.net/projects/vector-cards/files/
 
 Additional features and stretch goals:
 I would like to add insurance for authenticity (though it is rarely a good idea in real life use).
