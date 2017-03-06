@@ -37,8 +37,14 @@ $(document).ready(function() {
 //shows deck at i
 console.log(deck[0])
 //gives site of image
-console.log(deck[0].image)
-
+function deal(){
+  for(let i=0;i<3; i++){
+console.log(deck[i].image)
+var cardPic = deck[i].image
+$('.dealer').append(`<img src =${cardPic}>`)
+}
+};
+deal();
         });
 
       }
