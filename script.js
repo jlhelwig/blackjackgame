@@ -10,10 +10,15 @@ $.get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1').done(func
   console.log(theDeck)
   cardDraw(theDeck)
 });
-function cardDraw(theDeck){  $.get('https://deckofcardsapi.com/api/deck/' + theDeck + '/draw/?count=1').done(function(card) {
-  // console.log(card)
+function cardDraw(theDeck){  $.get('https://deckofcardsapi.com/api/deck/' + theDeck + '/draw/?count=52').done(function(card) {
+  console.log(card)
   var didItWork = card.success
   console.log(didItWork)
+  // for each(theDeck){
+//     for each (var item in obj) {
+//   sum += item;
+// }
+
   var cardCalled = card.cards[0].value
   var cardImage = card.cards[0].image
   // console.log(cardImage)
