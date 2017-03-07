@@ -11,16 +11,36 @@ h1 {
     display: inline-block;
     font-size: 16px;
 }
+.hit, .stick {
+    background-color: red; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
 
-.bank {
+/*.bank {
   position: fixed;
   bottom: 0px;
   height: 30px;
   width: 60px;
   border: 1px solid black;
-}
-.player{
+}*/
+/*.player{
   position: fixed;
   left: 220px;
   bottom: 0px;
+}*/
+
+.down {
+  left: 800px;
+  width:225px;
 }
+/*.down {
+  position:relative;
+  z-index: -1px;
+
+}*/

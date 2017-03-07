@@ -8,40 +8,41 @@ $(document).ready(function() {
     var usedCard = false;
     //This gets a deck I.D. we will use the same deck I.D. until the deck is down to 8 cards or so...
     $.get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1').done(function(deck) {
-        var theDeck = deck.deck_id
+        var deckId = deck.deck_id
         // console.log(theDeck)
-        cardDraw(theDeck)
+        cardDraw(deckId)
     });
     //draws 52 Random cards from above deck
     function cardDraw(theDeck) {
-        $.get('https://deckofcardsapi.com/api/deck/' + theDeck + '/draw/?count=52').done(function(card) {
+        $.get('https://deckofcardsapi.com/api/deck/' + theDeck + '/draw/?count=52').done(function(rawCards) {
 
-            var deck = createProperDeck(card)
+            var deck = createProperDeck(rawCards)
 
             //shows deck array of card objects
-            console.log(deck)
+            console.log(deck);
             //shows deck at i
-            console.log(deck[0])
+            console.log(deck[0]);
             //gives site of image
             //listen for bet to deal
           var bank = 1000;
-                    $('.one').click(function(){
-                      deal(deck)
-                      bank=bank-1
-                      console.log(bank)
-                    })
-              //listen for bet of 5 to deal
-                    $('.five').click(function(){
-                      deal(deck)
-                      bank=bank-5
-                      console.log(bank)
-                    })
-
+          $('.one').click(function(){
+            deal(deck);
+            bank -= 1;
+            console.log(bank);
+          })
+    //listen for bet of 5 to deal
+          $('.five').click(function(){
+            deal(deck)
+            bank -= 5
+            console.log(bank)
+          })
+                    // $('.test').click(function(){
+                    //   $("#card").flip();
+                    // })
           console.log(bank)
 
         });
     }
-
 
     function createProperDeck(card) {
       var deck = []
@@ -65,20 +66,86 @@ $(document).ready(function() {
 
 
     function deal(newDeck) {
+      // $('#cover').append('<img id="cover" src=pics/card_back.png>')
+      var playerHand = [];
+      var dealerHand = [];
         for (let i = 0; i < 4; i++) {
             // console.log(deck[i].image)
             var cardPic = newDeck[i].image
-            if (i===0){
-            $('.dealer').append(`<img src =${cardPic}>`)
-          }
-          else if(i===1){
-            $('.down').append(`<img src =${cardPic}>`)
-          }
-          else{
-            $('.player').append(`<img src =${cardPic}>`)
-          }
+              if (i===0) {
+                $('.dealer').append(`<img src =${cardPic}>`)
+                dealerHand.push(parseInt(newDeck[i].value,10));
+              }
+              else if(i===1){
+                $('.down').toggle().append(`<img src =${cardPic}>`)
+                dealerHand.push(parseInt(newDeck[i].value,10));
+              }
+              else if (i===2|| i===3){
+                $('.player').append(`<img src =${cardPic}>`)
+                playerHand.push(parseInt(newDeck[i].value,10));
+
+              }
+              console.log(playerHand);
+              console.log(dealerHand);
         }
-    };
+
+
+        let cardValThree = parseInt(newDeck[2].value,10);
+        let cardValFour = parseInt(newDeck[3].value,10)
+        var houseBlack = false
+
+        console.log(cardValThree)
+        console.log(cardValFour)
+        console.log(typeof cardValOne);
+
+        if (dealerHand[0] + dealerHand[1]===21){
+          console.log('21')
+          console.log('Dealer BlackJack')
+          alert("Dealer BlackJack!")
+          // var houseBlack= true
+          //flip the down card
+        }
+
+        if (playerHand[0] + playerHand[1]===21){
+          console.log('player BlackJack')
+          alert("BlackJack!! You Win")
+
+          if (houseBlack){
+            console.log('PUSH')
+            alert('push');
+
+            //return the bet to bank
+            //escape from if statement?
+          }
+        //add 1.5 times bet to bank
+        }
+
+        $('.hit').click(function(){
+          console.log(playerHand);
+          hitMe(newDeck, playerHand)
+          console.log(playerHand);
+          // bank=bank-1
+          // console.log(bank)
+        });
+
+function resolvePlayerHand(hand){
+  for (let i=0; i<hand.length; i++){
+
+  }
+}
+
+    };  //above is for function newDeck
+
+    function hitMe(aDeck, hand) {
+      let i=4
+      var cardPic = aDeck[i].image
+      console.log(cardPic);
+      $('.player').append(`<img src =${cardPic}>`)
+
+      let newCard = parseInt(aDeck[i].value,10)
+      hand.push(newCard)
+      i++
+    }
 
 
 });
