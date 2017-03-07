@@ -124,15 +124,24 @@ $(document).ready(function() {
           console.log(playerHand);
           hitMe(newDeck, playerHand)
           console.log(playerHand);
+          var sumOfCards =playerHand.reduce(function(acc,val){
+            return acc+=val
+          },0)
+          var checkAce =$.inArray(11,playerHand)
+          if(sumOfCards >21 && checkAce!==-1){
+            sumOfCards=sumOfCards-10
+          }
+          console.log(sumOfCards)
+          alert("you have "+ sumOfCards)
           // bank=bank-1
           // console.log(bank)
         });
 
-function resolvePlayerHand(hand){
-  for (let i=0; i<hand.length; i++){
-
-  }
-}
+// function resolvePlayerHand(hand){
+//   for (let i=0; i<hand.length; i++){
+//
+//   }
+// }
 
     };  //above is for function newDeck
 
