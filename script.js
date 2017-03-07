@@ -65,11 +65,14 @@ $(document).ready(function() {
 
 
     function deal(newDeck) {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 4; i++) {
             // console.log(deck[i].image)
             var cardPic = newDeck[i].image
             if (i===0){
             $('.dealer').append(`<img src =${cardPic}>`)
+          }
+          else if(i===1){
+            $('.down').append(`<img src =${cardPic}>`)
           }
           else{
             $('.player').append(`<img src =${cardPic}>`)
