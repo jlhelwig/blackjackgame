@@ -36,7 +36,8 @@ h1 {
 }*/
 
 .down {
-  left: 800px;
+  position: absolute;
+  left: 120px;
   width:225px;
 }
 /*.down {
