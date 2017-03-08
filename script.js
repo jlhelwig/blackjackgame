@@ -1,5 +1,6 @@
 $(document).ready(function() {
     // console.log( "ready!" );
+    $('.double').hide();
 
     var cardObj = {};
     var theDeck
@@ -100,11 +101,16 @@ $(document).ready(function() {
         // console.log(cardValThree);
         // console.log(cardValFour);
         //
-
         if (dealerHand[0] + dealerHand[1] === 21) {
             console.log('21');
             console.log('Dealer BlackJack');
             alert("Dealer BlackJack!");
+            let i = 1;
+            let downCard = newDeck[i].image;
+            // console.log('down card image = ' + downCard);
+            console.log('down card image source = ' +downCard)
+            $('.down').empty();
+            $('.down').append(`<img src =${downCard}>`);
             // var houseBlack= true
             //flip the down card
         }
@@ -113,14 +119,23 @@ $(document).ready(function() {
             console.log('player BlackJack');
             alert("BlackJack!! You Win");
 
-            if (houseBlack) {
-                console.log('PUSH');
-                alert('push');
-
-                //return the bet to bank
-                //escape from if statement?
-            }
+            // if (houseBlack) {
+            //     console.log('PUSH');
+            //     alert('push');
+            //
+            //     //return the bet to bank
+            //     //escape from if statement?
+            // }
             //add 1.5 times bet to bank
+        }
+        if (playerHand[0] + playerHand[1] === 11){
+          $('.double').show();
+          $('.double').click(function(){
+            console.log("Double Down Time")
+            hitMe(newDeck, playerHand);
+            stick(newDeck, dealerHand);
+        });
+          //player gets one card and function stick is called
         }
 
         $('.hit').click(function() {

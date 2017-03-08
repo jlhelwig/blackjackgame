@@ -11,7 +11,7 @@ h1 {
     display: inline-block;
     font-size: 16px;
 }
-.hit, .stick {
+.hit, .stick, .double {
     background-color: red; /* Green */
     border: none;
     color: white;
