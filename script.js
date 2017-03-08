@@ -79,7 +79,7 @@ $(document).ready(function() {
             } else if (i === 1) {
                 var cardBack = '<img class="down" src="pics/card_back.png">';
                 $('.down').append(`${cardBack}`);
-                var downCardPic='<img src =newDeck[i].image>';
+                var downCardPic = '<img src =newDeck[i].image>';
                 // $('.down').toggle().append(`<img src =${cardPic}>`)
                 dealerHand.push(parseInt(newDeck[i].value, 10));
             } else if (i === 2 || i === 3) {
@@ -96,9 +96,9 @@ $(document).ready(function() {
         let cardValFour = parseInt(newDeck[3].value, 10);
         var houseBlack = false;
 
-        console.log(cardValThree);
-        console.log(cardValFour);
-        console.log(typeof cardValOne);
+        // console.log(cardValThree);
+        // console.log(cardValFour);
+        //
 
         if (dealerHand[0] + dealerHand[1] === 21) {
             console.log('21');
@@ -123,10 +123,10 @@ $(document).ready(function() {
         }
 
         $('.hit').click(function() {
-            console.log("playerHand var = " +playerHand);
+            console.log("playerHand var = " + playerHand);
 
             hitMe(newDeck, playerHand)
-            console.log("playerHand after hitMe function = " +playerHand);
+            console.log("playerHand after hitMe function = " + playerHand);
             var sumOfCards = playerHand.reduce(function(acc, val) {
                 return acc += val;
             }, 0)
@@ -139,47 +139,49 @@ $(document).ready(function() {
             // bank=bank-1
             // console.log(bank)
         });
-        $('.stick').click(function(){
-          console.log("you clicked stick");
-          stick(newDeck,dealerHand);
-          // var sumOfDealerCards = dealerHand.reduce(function(acc,val){
-          //   return acc+=val
-          // },0)
-          // Alert("Dealer Has "+ sumOfDealerCards)
-          // $('.down').append(downCardPic)
+        $('.stick').click(function() {
+            console.log("you clicked stick");
+            stick(newDeck, dealerHand);
+            // var sumOfDealerCards = dealerHand.reduce(function(acc,val){
+            //   return acc+=val
+            // },0)
+            // Alert("Dealer Has "+ sumOfDealerCards)
+            // $('.down').append(downCardPic)
         })
 
 
 
     }; //above is for function newDeck
 
-    function stick(aDeck,dealerHand) {
-    let i = 1;
-    let downCard = aDeck[i].image;
-    // console.log('down card image = ' + downCard);
-    $('.down').empty();
-    $('.down').append(`<img src =${downCard}>`);
-    let downCardVal = parseInt(aDeck[i].value, 10);
-    var sumOfDealerCards = dealerHand.reduce(function(acc,val){
-      return acc+=val;
-    },0);
-    alert("dealer has"+sumOfDealerCards);
-    // var checkSoft = $.inArray(11,dealerHand)
-    // if (sumOfDealerCards >21 && checkSoft!==-1){
-    //   sumOfDealerCards=sumOfDealerCards-10
-    // }
-    if (sumOfDealerCards<=16){
-      //draw a card function add to dealerHand sum and check again
+    function stick(aDeck, dealerHand) {
+        let i = 1;
+        let downCard = aDeck[i].image;
+        // console.log('down card image = ' + downCard);
+        $('.down').empty();
+        $('.down').append(`<img src =${downCard}>`);
+        let downCardVal = parseInt(aDeck[i].value, 10);
+        var sumOfDealerCards = dealerHand.reduce(function(acc, val) {
+            return acc += val;
+        }, 0);
+        alert("dealer has" + sumOfDealerCards);
+        // var checkSoft = $.inArray(11,dealerHand)
+        // if (sumOfDealerCards >21 && checkSoft!==-1){
+        //   sumOfDealerCards=sumOfDealerCards-10
+        // }
+        while (sumOfDealerCards <= 16) {
+            console.log(sumOfDealerCards)
+            sumOfDealerCards = dealerHit(aDeck, dealerHand)
+            //draw a card function add to dealerHand sum and check again
+        }
+        // if (sumOfDealerCards>21){
+        //   //run bust function
+        // }
+        // else{
+        //   //winner function
+        // }
+
+
     }
-    // if (sumOfDealerCards>21){
-    //   //run bust function
-    // }
-    // else{
-    //   //winner function
-    // }
-
-
-}
 
 
     function hitMe(aDeck, hand) {
@@ -190,7 +192,25 @@ $(document).ready(function() {
         let newCard = parseInt(aDeck[hitCard].value, 10);
         hand.push(newCard);
         hitCard = hitCard + 1;
-        console.log("index of last card = " + hitCard);
+        console.log("index of next card = " + hitCard);
+    }
+
+    function dealerHit(aDeck, dealerHand) {
+        var dealerHitPic = aDeck[hitCard].image;
+        console.log("dealer hit card = " + dealerHitPic);
+        $('.dealerDraw').append(`<img src =${dealerHitPic}>`);
+        let newCard = parseInt(aDeck[hitCard].value, 10);
+        dealerHand.push(newCard)
+        hitCard = hitCard + 1
+        console.log('dealer hand is = ' + dealerHand)
+        var sumOfDealerCards = dealerHand.reduce(function(acc, val) {
+            return acc += val;
+        }, 0);
+        if (newCard === 11 && sumOfDealerCards > 21) {
+            sumOfDealerCards = sumOfDealerCards - 10
+        }
+        alert("dealer has " + sumOfDealerCards)
+        return sumOfDealerCards;
     }
     // function bust(){
     //   //will show either the player or the dealer win, depending on who busted
