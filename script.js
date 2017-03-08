@@ -7,6 +7,8 @@ $(document).ready(function() {
     var cardImage
     var usedCard = false;
     var hitCard = 4;
+
+    var bank = 1000;
     //This gets a deck I.D. we will use the same deck I.D. until the deck is down to 8 cards or so...
     $.get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1').done(function(deck) {
         var deckId = deck.deck_id
@@ -25,7 +27,6 @@ $(document).ready(function() {
             console.log(deck[0]);
             //gives site of image
             //listen for bet to deal
-            var bank = 1000;
             $('.one').click(function() {
                 deal(deck);
                 bank -= 1;
@@ -92,9 +93,9 @@ $(document).ready(function() {
         }
 
 
-        let cardValThree = parseInt(newDeck[2].value, 10);
-        let cardValFour = parseInt(newDeck[3].value, 10);
-        var houseBlack = false;
+        // let cardValThree = parseInt(newDeck[2].value, 10);
+        // let cardValFour = parseInt(newDeck[3].value, 10);
+        // var houseBlack = false;
 
         // console.log(cardValThree);
         // console.log(cardValFour);
@@ -136,6 +137,11 @@ $(document).ready(function() {
             }
             console.log(sumOfCards);
             alert("you have " + sumOfCards);
+            if (sumOfCards>21){
+              console.log('BUST!')
+              alert('BUST!')
+              // reduce the cards in the deck and re-deal or simply call new deck
+            }
             // bank=bank-1
             // console.log(bank)
         });
@@ -173,9 +179,9 @@ $(document).ready(function() {
             sumOfDealerCards = dealerHit(aDeck, dealerHand)
             //draw a card function add to dealerHand sum and check again
         }
-        // if (sumOfDealerCards>21){
-        //   //run bust function
-        // }
+        if (sumOfDealerCards>21){
+          alert('Dealer busts! You Win')
+        }
         // else{
         //   //winner function
         // }
