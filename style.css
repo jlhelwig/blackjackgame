@@ -1,16 +1,46 @@
 h1 {
-  color: green;
+  color: #e0c76b;
+  font-family: 'Italianno', cursive;
+  font-size: 50px;
+
 }
-.one, .five {
+.alert{
+  width: 280px;
+  border: 1px solid #e0c76b;
+  font-size: 25px;
+  color:#e0c76b;
+
+}
+.one, .five{
+  cursor: pointer;
+  content: "";
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+  position: relative;
+  margin: 5px;
+  top: 6px;
+  border-radius: 50px;
+  z-index: 500;
+  box-shadow:  2px 2px 2px 1px rgba(0, 0, 0, .1);
+  }
+/*.one, .five {
     background-color: #4CAF50; /* Green */
-    border: none;
+    /*border: none;
     color: white;
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: 16px;*/
+/*}*/
+.one{
+  background: linear-gradient(45deg,  rgba(160,160,160,1) 0%,rgba(232,232,232,1) 56%);
+  }
+  .five{
+background: linear-gradient(45deg,  rgba(242,215,12,1) 0%,rgba(255,255,255,1) 56%,rgba(252,235,0,1) 96%);
 }
+
 .hit, .stick, .double, .split {
     background-color: red; /* Green */
     border: none;
@@ -21,7 +51,9 @@ h1 {
     display: inline-block;
     font-size: 16px;
 }
-
+body{
+  background-color: black;
+}
 /*.bank {
   position: fixed;
   bottom: 0px;

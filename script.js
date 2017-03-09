@@ -11,11 +11,12 @@ $(document).ready(function() {
     var playerHand;
     var dealerHand;
     var deck;
+    var deckId;
 
     var bank = 1000;
     //This gets a deck I.D. we will use the same deck I.D. until the deck is down to 8 cards or so...
     $.get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1').done(function(deck) {
-        var deckId = deck.deck_id
+        deckId = deck.deck_id
         // console.log(theDeck)
         cardDraw(deckId);
     });
@@ -45,6 +46,7 @@ $(document).ready(function() {
                   $('.player').empty();
                   $('.split').hide();
                   $('.double').hide();
+                  $('.alert').empty();
                   // $('span').empty();
                   // $('p').empty();
                   // $('.down').append("<img src = 'pics/card_back.png'>");
@@ -60,16 +62,25 @@ $(document).ready(function() {
             })
             //listen for bet of 5 to deal
             $('.five').click(function() {
-
+              playerHand = [];
+              dealerHand = [];
               // clean house
               if (hitCard > 3) {
-                // var previousHit = hitCard;
-                $('span').empty();
-                $('p').empty();
-                $('.down').append("<img src = 'pics/card_back.png'>");
-                hitCard = 4
-                deck.splice(0, hitCard);
-                // bank -= 5;
+                console.log('this is running the clean up and splice')
+                var previousHit = hitCard;
+                $('.down').empty();
+                $('.dealer').empty();
+                $('.dealerDraw').empty();
+                $('.player').empty();
+                $('.split').hide();
+                $('.double').hide();
+                $('.alert').empty();
+                // $('span').empty();
+                // $('p').empty();
+                // $('.down').append("<img src = 'pics/card_back.png'>");
+                deck.splice(0, previousHit)
+                deal(deck);
+                bank -= 5;
               } else {
                 deal(deck);
                 bank -= 5;
@@ -143,7 +154,9 @@ $(document).ready(function() {
         if (dealerHand[0] + dealerHand[1] === 21) {
             console.log('21');
             console.log('Dealer BlackJack');
-            alert("Dealer BlackJack!");
+            $('.alert').empty();
+            $('.alert').append('Dealer BlackJack');
+            // alert("Dealer BlackJack!");
             let i = 1;
             let downCard = newDeck[i].image;
             // console.log('down card image = ' + downCard);
@@ -165,7 +178,9 @@ $(document).ready(function() {
         console.log(playerHand[0]===playerHand[1])
         if (playerHand[0] + playerHand[1] === 21) {
             console.log('player BlackJack');
-            alert("BlackJack!! You Win");
+            $('.alert').empty();
+            $('.alert').append('BlackJack!! You Win!!');
+            // alert("BlackJack!! You Win");
 
             // if (houseBlack) {
             //     console.log('PUSH');
@@ -202,10 +217,14 @@ $(document).ready(function() {
         sumOfCards = sumOfCards - 10;
       }
       console.log(sumOfCards);
-      alert("you have " + sumOfCards);
+      $('.alert').empty();
+      $('.alert').append(sumOfCards)
+      // alert("you have " + sumOfCards);
       if (sumOfCards > 21) {
         console.log('BUST!')
-        alert('BUST!')
+        $('.alert').empty();
+        $('.alert').append("BUST")
+        // alert('BUST!')
         // reduce the cards in the deck and re-deal or simply call new deck
       }
       // bank=bank-1
@@ -231,7 +250,9 @@ $(document).ready(function() {
         var sumOfDealerCards = dhand.reduce(function(acc, val) {
             return acc += val;
         }, 0);
-        alert("dealer has" + sumOfDealerCards);
+        $('.alert').empty();
+        $('.alert').append('Dealer has '+sumOfDealerCards);
+        // alert("dealer has" + sumOfDealerCards);
         // var checkSoft = $.inArray(11,dhand)
         // if (sumOfDealerCards >21 && checkSoft!==-1){
         //   sumOfDealerCards=sumOfDealerCards-10
@@ -247,16 +268,32 @@ $(document).ready(function() {
         },0)
 
         if (sumOfDealerCards > 21) {
-            alert('Dealer busts! You Win')
-        } else if(sumOfDealerCards > sumOfPlayerCards ) {
-          alert('Dealer wins. All Your Base Are Belong To Us!')
-        } else {
-          alert('You WIN!!')
+          //need to check for soft numbers here
+            $('.alert').empty();
+            $('.alert').append('Dealer busts! You Win!');
         }
+        else if(sumOfDealerCards===sumOfPlayerCards){
+          $('.alert').empty();
+          $('.alert').append('Push')
 
-        // function startNewGame(){
-        //
-        // }
+        }
+        else if(sumOfDealerCards > sumOfPlayerCards ) {
+          $('.alert').empty();
+          $('.alert').append('Dealer Wins!')
+
+
+        }
+        else if(sumOfDealerCards < sumOfPlayerCards ) {
+          $('.alert').empty();
+          $('.alert').append('Player Wins!')
+
+
+        }
+        console.log('cards left in deck' + deck.length)
+        if (deck.length<20){
+          cardDraw(deckId)
+          alert('shuffling!!!')
+        }
 
 
 
@@ -288,7 +325,9 @@ $(document).ready(function() {
         if (newCard === 11 && sumOfDealerCards > 21) {
             sumOfDealerCards = sumOfDealerCards - 10
         }
-        alert("dealer has " + sumOfDealerCards)
+        $('.alert').empty();
+        $('.alert').append('Dealer has '+sumOfDealerCards)
+        // alert("dealer has " + sumOfDealerCards)
         return sumOfDealerCards;
     }
 
