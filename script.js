@@ -43,11 +43,13 @@ $(document).ready(function() {
                   $('.dealer').empty();
                   $('.dealerDraw').empty();
                   $('.player').empty();
-                  $('span').empty();
-                  $('p').empty();
-                  $('.down').append("<img src = 'pics/card_back.png'>");
-
-                  deal(deck.splice(0, previousHit));
+                  $('.split').hide();
+                  $('.double').hide();
+                  // $('span').empty();
+                  // $('p').empty();
+                  // $('.down').append("<img src = 'pics/card_back.png'>");
+                  deck.splice(0, previousHit)
+                  deal(deck);
                   bank -= 1;
                 } else {
                   deal(deck);
@@ -109,9 +111,11 @@ $(document).ready(function() {
         for (let i = 0; i < 4; i++) {
             // console.log(deck[i].image)
             var cardPic = newDeck[i].image;
+            console.log('deck length'+newDeck.length)
             if (i === 0) {
                 $('.dealer').append(`<img src =${cardPic}>`);
                 dealerHand.push(parseInt(newDeck[i].value, 10));
+                console.log('this is where the picture of the dealer up hand should be' +cardPic)
             } else if (i === 1) {
                 var cardBack = '<img class="down" src="pics/card_back.png">';
                 $('.down').append(`${cardBack}`);
