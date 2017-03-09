@@ -128,7 +128,7 @@ $(document).ready(function() {
                 dealerHand.push(parseInt(newDeck[i].value, 10));
                 console.log('this is where the picture of the dealer up hand should be' +cardPic)
             } else if (i === 1) {
-                var cardBack = '<img class="down" src="pics/card_back.png">';
+                var cardBack = '<img class= "down" src="pics/card_back.png">';
                 $('.down').append(`${cardBack}`);
                 var downCardPic = '<img src =newDeck[i].image>';
                 // $('.down').toggle().append(`<img src =${cardPic}>`)
@@ -162,7 +162,7 @@ $(document).ready(function() {
             // console.log('down card image = ' + downCard);
             console.log('down card image source = ' + downCard)
             $('.down').empty();
-            $('.down').append(`<img src =${downCard}>`);
+            $('.dealer').append(`<img src =${downCard}>`);
             // var houseBlack= true
             //flip the down card
         }
@@ -245,7 +245,8 @@ $(document).ready(function() {
         let downCard = aDeck[i].image;
         // console.log('down card image = ' + downCard);
         $('.down').empty();
-        $('.down').append(`<img src =${downCard}>`);
+
+        $('.dealer').append(`<img src =${downCard}>`);
         let downCardVal = parseInt(aDeck[i].value, 10);
         var sumOfDealerCards = dhand.reduce(function(acc, val) {
             return acc += val;
@@ -314,7 +315,7 @@ $(document).ready(function() {
     function dealerHit(aDeck, dhand) {
         var dealerHitPic = aDeck[hitCard].image;
         console.log("dealer hit card = " + dealerHitPic);
-        $('.dealerDraw').append(`<img src =${dealerHitPic}>`);
+        $('.dealer').append(`<img src =${dealerHitPic}>`);
         let newCard = parseInt(aDeck[hitCard].value, 10);
         dhand.push(newCard)
         hitCard = hitCard + 1
