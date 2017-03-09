@@ -254,16 +254,16 @@ $(document).ready(function() {
         $('.alert').empty();
         $('.alert').append('Dealer has '+sumOfDealerCards);
         // alert("dealer has" + sumOfDealerCards);
-        // var checkSoft = $.inArray(11,dhand)
-        // if (sumOfDealerCards >21 && checkSoft!==-1){
-        //   sumOfDealerCards=sumOfDealerCards-10
-        // }
+        var checkSoft = $.inArray(11,dhand)
         while (sumOfDealerCards <= 16) {
             console.log(sumOfDealerCards)
             sumOfDealerCards = dealerHit(aDeck, dhand)
             //draw a card function add to dealerHand sum and check again
         }
 
+        if (sumOfDealerCards >21 && checkSoft!==-1){
+          sumOfDealerCards=sumOfDealerCards-10
+        }
         sumOfPlayerCards = phand.reduce(function(acc,val){
           return acc += val;
         },0)
@@ -273,6 +273,7 @@ $(document).ready(function() {
             $('.alert').empty();
             $('.alert').append('Dealer busts! You Win!');
         }
+
         else if(sumOfDealerCards===sumOfPlayerCards){
           $('.alert').empty();
           $('.alert').append('Push')

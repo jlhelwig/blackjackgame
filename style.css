@@ -1,14 +1,70 @@
+.screen{
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  /*border: 5px solid red;*/
+  /*height: 100%;*/
+  width: 100%;
+  /*position: relative;
+  z-index: 0;*/
+  /*align-items: center;*/
+
+}
+.dealerBox{
+  height: 80%;
+  width: 90%;
+  /*border: 5px solid red;*/
+  display: flex;
+  justify-content: flex-end;
+
+
+}
+.dealer{
+/*margin-right: 20%*/
+
+}
+.playerBox{
+  height: 40%;
+  width: 100%;
+  /*border: 5px solid green;*/
+  display: flex;
+  justify-content: flex-end;
+}
+.decisionBox{
+  height: 20%;
+  width: 100%;
+  /*border: 5px solid yellow;*/
+  display: flex;
+  justify-content: center;
+}
+.betBox{
+  height: 75%;
+  /*border: 5px solid blue;*/
+  display: flex;
+  flex-flow: column wrap;
+  align-self: center;
+  margin-top: 5%;
+  /*position: absolute;*/
+  /*margin-top: 20%;*/
+}
+
 h1 {
   color: #e0c76b;
   font-family: 'Italianno', cursive;
   font-size: 50px;
+  position: absolute;
+  z-index: -1;
+
 
 }
+
 .alert{
   width: 280px;
-  border: 1px solid #e0c76b;
+  text-align: center;
+  /*border: 1px solid #e0c76b;*/
   font-size: 25px;
   color:#e0c76b;
+
 
 }
 .one, .five{
@@ -52,7 +108,7 @@ background: linear-gradient(45deg,  rgba(242,215,12,1) 0%,rgba(255,255,255,1) 56
     font-size: 16px;
 }
 body{
-  background-color: black;
+  background-color: #008000;
 }
 /*.bank {
   position: fixed;
@@ -68,7 +124,7 @@ body{
 }*/
 
 .down {
-  position: absolute;
+  /*position: absolute;*/
   left: 120px;
   width:225px;
 }
