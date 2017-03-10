@@ -236,7 +236,10 @@ $(document).ready(function() {
         }, 0)
         var checkAce = $.inArray(11, playerHand);
         if (sumOfCards > 21 && checkAce !== -1) {
-            sumOfCards = sumOfCards - 10;
+          playerHand[checkAce]=1
+          var sumOfCards = playerHand.reduce(function(acc, val) {
+              return acc += val;
+          }, 0)
         }
         // console.log(sumOfCards);
         $('.alert').empty();
@@ -310,7 +313,9 @@ $(document).ready(function() {
             $('.alert').append('Dealer Wins!')
 
 
-        } else if (sumOfDealerCards < sumOfPlayerCards) {
+        }
+
+        else if (sumOfDealerCards < sumOfPlayerCards) {
           console.log('dealer sum ' + sumOfDealerCards);
           console.log('player sum ' + sumOfPlayerCards);
 

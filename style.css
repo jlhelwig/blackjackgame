@@ -76,6 +76,7 @@ h1 {
 
 }
 .one, .five{
+  font-size: 25px;
   cursor: pointer;
   content: "";
   width: 100px;
@@ -88,21 +89,14 @@ h1 {
   z-index: 500;
   box-shadow:  2px 2px 2px 1px rgba(0, 0, 0, .1);
   }
-/*.one, .five {
-    background-color: #4CAF50; /* Green */
-    /*border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;*/
-/*}*/
+
 .one{
+  color: #ffbe25;
   background: linear-gradient(45deg,  rgba(160,160,160,1) 0%,rgba(232,232,232,1) 56%);
   }
-  .five{
-background: linear-gradient(45deg,  rgba(242,215,12,1) 0%,rgba(255,255,255,1) 56%,rgba(252,235,0,1) 96%);
+.five{
+  color: #999999;
+  background: linear-gradient(45deg,  rgba(242,215,12,1) 0%,rgba(255,255,255,1) 56%,rgba(252,235,0,1) 96%);
 }
 
 .hit, .stick, .double, .split {
