@@ -12,7 +12,7 @@
 }
 .dealerBox{
   height: 80%;
-  width: 90%;
+  width: 92%;
   /*border: 5px solid red;*/
   display: flex;
   justify-content: flex-end;
@@ -24,7 +24,7 @@
 
 }
 .playerBox{
-  height: 40%;
+  height: 30%;
   width: 100%;
   /*border: 5px solid green;*/
   display: flex;
@@ -32,7 +32,7 @@
 }
 .decisionBox{
   height: 20%;
-  width: 100%;
+  width: 20%;
   /*border: 5px solid yellow;*/
   display: flex;
   justify-content: center;
@@ -43,7 +43,7 @@
   display: flex;
   flex-flow: column wrap;
   align-self: center;
-  margin-top: 5%;
+  margin-top: 10%;
   /*position: absolute;*/
   /*margin-top: 20%;*/
 }
@@ -57,9 +57,17 @@ h1 {
 
 
 }
+.bottomLine{
+  display: flex;
+  height: 20%;
+  width: 100%;
+  justify-content: center;
+  /*border: 1px solid red;*/
+
+}
 
 .alert{
-  width: 280px;
+  width: 20%;
   text-align: center;
   /*border: 1px solid #e0c76b;*/
   font-size: 25px;
