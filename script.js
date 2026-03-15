@@ -1,382 +1,314 @@
 $(document).ready(function() {
-    // console.log( "ready!" );
     $('.double').hide();
-    $('.split').hide();
+    $('.split').hide(); // Split button is initially hidden
     $('.hit').hide();
     $('.stick').hide();
     var cardObj = {};
     var theDeck;
-    var cardCalled;
+    // var cardCalled; // Unused variable
     var cardImage;
-    var usedCard = false;
-    var hitCard = 0;
+    var hitCard = 0; // Index for the next card to draw from the deck array
     var playerHand;
     var dealerHand;
-    var deck;
-    var deckId;
-    var checkSoft;
+    var deck; // Array containing card objects
+    var deckId; // The ID of the current deck from the API
+    // var checkSoft; // Declared but not actively used in current logic, potentially for future Ace handling.
 
-    var bank = 1000;
-    //This gets a deck I.D. we will use the same deck I.D. until the deck is down to 8 cards or so...
+    var bank = 1000; // Initial bankroll
+    var currentBet = 0; // To store the current bet for the round
+
+    // Initialize deck ID and shuffle
     $.get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1').done(function(deck) {
         deckId = deck.deck_id
-        // console.log(theDeck)
         cardDraw(deckId);
     });
-    //draws 52 Random cards from above deck
-    function cardDraw(theDeck) {
-        $.get('https://deckofcardsapi.com/api/deck/' + theDeck + '/draw/?count=52').done(function(rawCards) {
 
+    // Draw 52 cards from the shuffled deck and set up betting listeners
+    function cardDraw(theDeckId) { // Renamed parameter to be more specific
+        $.get('https://deckofcardsapi.com/api/deck/' + theDeckId + '/draw/?count=52').done(function(rawCards) {
             deck = createProperDeck(rawCards);
+            hitCard = 0; // Reset hitCard index when a new deck is drawn/prepared
 
-            //shows deck array of card objects
-            // console.log(deck);
-            //shows deck at i
-            // console.log(deck[0]);
-            //gives site of image
-            //listen for bet to deal
-            $('.one').click(function() {
-                playerHand = [];
-                dealerHand = [];
-                $('.hit').show();
-                $('.stick').show();
-                // clean house
-                // console.log("right before hitCard>3 test =  " + hitCard)
-                if (hitCard > 3) {
-                    // console.log('this is running the clean up and splice')
-                    var previousHit = hitCard;
-                    $('.down').empty();
-                    $('.dealer').empty();
-                    $('.dealerDraw').empty();
-                    $('.player').empty();
-                    $('.split').hide();
-                    $('.double').hide();
-                    $('.alert').empty();
-                    // $('span').empty();
-                    // $('p').empty();
-                    // $('.down').append("<img src = 'pics/card_back.png'>");
-                    deck.splice(0, previousHit)
-                    deal(deck);
-                    bank -= 1;
-                } else {
-                    deal(deck);
-                    bank -= 1;
-                    // console.log(bank);
-                }
+            // Set up listeners for bets
+            $('.one').off('click').on('click', function() {
+                currentBet = 1;
+                playRound(deck);
+            });
 
-            })
-            //listen for bet of 5 to deal
-            $('.five').click(function() {
-                playerHand = [];
-                dealerHand = [];
-                $('.hit').show()
-                $('.stick').show();
-                // clean house
-                if (hitCard > 3) {
-                    // console.log('this is running the clean up and splice')
-                    var previousHit = hitCard;
-                    $('.down').empty();
-                    $('.dealer').empty();
-                    $('.dealerDraw').empty();
-                    $('.player').empty();
-                    $('.split').hide();
-                    $('.double').hide();
-                    $('.alert').empty();
-                    // $('span').empty();
-                    // $('p').empty();
-                    // $('.down').append("<img src = 'pics/card_back.png'>");
-                    deck.splice(0, previousHit)
-                    deal(deck);
-                    bank -= 5;
-                } else {
-                    deal(deck);
-                    bank -= 5;
-                }
-
-            })
-            // $('.test').click(function(){
-            //   $("#card").flip();
-            // })
-            // console.log(bank);
-
+            $('.five').off('click').on('click', function() {
+                currentBet = 5;
+                playRound(deck);
+            });
         });
     }
 
-    function createProperDeck(card) {
+    // Convert card data from API to a usable format
+    function createProperDeck(cardData) { // Renamed parameter for clarity
         var deck = [];
-        for (let i = 0; i < 52; i++) {
-            //gives value to aces
-            if (card.cards[i].value === "ACE") {
-                card.cards[i].value = '11';
+        for (let i = 0; i < cardData.cards.length; i++) { // Use cardData.cards.length for safety
+            let card = cardData.cards[i];
+            let value = card.value;
+            if (value === "ACE") {
+                value = '11'; // Aces are initially 11
+            } else if (value === "KING" || value === "QUEEN" || value === "JACK") {
+                value = '10';
             }
-            //gives value to kings, queens and jacks
-            if (card.cards[i].value === "KING" || card.cards[i].value === "QUEEN" || card.cards[i].value === "JACK") {
-                card.cards[i].value = '10';
-            }
-            //adds a usedCard class set to false
-            // card.cards[i].usedCard = usedCard;
-            //pushes each card into the 'deck'
-            deck.push(card.cards[i]);
+            card.value = value; // Update the value in the card object
+            deck.push(card);
         }
-
         return deck;
     }
 
+    // Helper function to calculate hand value, handling Aces correctly
+    function calculateHandValue(hand) {
+        let sum = 0;
+        let aceCount = 0;
 
-    function deal(newDeck) {
-        // $('#cover').append('<img id="cover" src=pics/card_back.png>')
-        hitCard = 4
-        for (let i = 0; i < 4; i++) {
-            // console.log(deck[i].image)
-            var cardPic = newDeck[i].image;
-            // console.log('deck length' + newDeck.length)
-            if (i === 0) {
-                $('.dealer').append(`<img src =${cardPic}>`);
-                dealerHand.push(parseInt(newDeck[i].value, 10));
-                // console.log('this is where the picture of the dealer up hand should be' + cardPic)
-            } else if (i === 1) {
-                var cardBack = '<img class= "down" src="pics/card_back.png">';
-                $('.down').append(`${cardBack}`);
-                var downCardPic = '<img src =newDeck[i].image>';
-                // $('.down').toggle().append(`<img src =${cardPic}>`)
-                dealerHand.push(parseInt(newDeck[i].value, 10));
-            } else if (i === 2 || i === 3) {
-                $('.player').append(`<img src =${cardPic}>`);
-                playerHand.push(parseInt(newDeck[i].value, 10));
-
+        for (let i = 0; i < hand.length; i++) {
+            const cardValue = parseInt(hand[i].value, 10); // Access 'value' property
+            if (cardValue === 11) {
+                aceCount++;
             }
-            // console.log("player hand " + playerHand);
-            // console.log("dealer hand " + dealerHand);
-            // console.log("hitcard or index# " + hitCard)
+            sum += cardValue;
         }
 
-
-        // let cardValThree = parseInt(newDeck[2].value, 10);
-        // let cardValFour = parseInt(newDeck[3].value, 10);
-        // var houseBlack = false;
-
-        // console.log(cardValThree);
-        // console.log(cardValFour);
-        //
-        if (dealerHand[0] + dealerHand[1] === 21) {
-            // console.log('21');
-            // console.log('Dealer BlackJack');
-            $('.alert').empty();
-            $('.alert').append('Dealer BlackJack');
-            // alert("Dealer BlackJack!");
-            let i = 1;
-            let downCard = newDeck[i].image;
-            // console.log('down card image = ' + downCard);
-            // console.log('down card image source = ' + downCard)
-            $('.down').empty();
-            $('.dealer').append(`<img src =${downCard}>`);
-            $('.hit').hide();
-            $('.stick').hide();
-            $('.double').hide();
-            // var houseBlack= true
-            //flip the down card
+        // Adjust for Aces if sum is over 21
+        while (sum > 21 && aceCount > 0) {
+            sum -= 10; // Change Ace value from 11 to 1
+            aceCount--;
         }
+        return sum;
+    }
 
-        // if (playerHand[0] === playerHand[1] && playerHand[0]!== 10) {
-        //   $('.split').show();
-        //   console.log('Player has two of a kind')
-        //   //make sure they can't split 10's
-        //   console.log("player card 1 to check for pair = "+ playerHand[0]);
-        //   console.log("player card 2 to check for pair = "+ playerHand[1]);
-        //
-        // }
-        // console.log(playerHand[0]===playerHand[1])
-        if (playerHand[0] + playerHand[1] === 21) {
-            // console.log('player BlackJack');
-            $('.alert').empty();
-            $('.alert').append('BlackJack!! You Win!!');
-            $('.hit').hide();
-            $('.stick').hide();
-            // alert("BlackJack!! You Win");
+    // Helper function to check if a split is possible
+    function canSplit(hand) {
+        if (hand.length !== 2) return false;
+        // Check if the values of the two cards are the same rank
+        return hand[0].value === hand[1].value;
+    }
 
-            // if (houseBlack) {
-            //     console.log('PUSH');
-            //     alert('push');
-            //
-            //     //return the bet to bank
-            //     //escape from if statement?
-            // }
-            //add 1.5 times bet to bank
-        }
-        if (playerHand[0] + playerHand[1] === 21 && dealerHand[0] + dealerHand[1] === 21) {
-            $('.alert').append('PUSH')
-            $('.hit').hide();
-            $('.stick').hide();
-            //check for naturals blackjacks for both dealer and player
+    // Function to start a new round of play
+    function playRound(currentDeck) { // Renamed parameter for clarity
+        playerHand = [];
+        dealerHand = [];
+        hitCard = 0; // Reset hitCard index to start drawing from the beginning of the deck for this round
 
-        }
-        if (playerHand[0] + playerHand[1] === 11 && dealerHand[0] + dealerHand[1] !==21) {
-            $('.double').show();
-            $('.double').click(function() {
-                // console.log("Double Down Time")
-                $('.hit').hide();
-                $('.stick').hide();
-                $('.double').hide();
-                hitMe(newDeck, playerHand);
-                stick(newDeck, dealerHand);
-            });
-            //player gets one card and function stick is called
-        }
-
-
-    }; //above is for function newDeck
-
-    $('.hit').click(function() {
-        // console.log("playerHand var = " + playerHand);
+        $('.hit').show();
+        $('.stick').show();
         $('.double').hide();
-        hitMe(deck, playerHand)
-        // console.log("playerHand after hitMe function = " + playerHand);
-        var sumOfCards = playerHand.reduce(function(acc, val) {
-            return acc += val;
-        }, 0)
-        var checkAce = $.inArray(11, playerHand);
-        if (sumOfCards > 21 && checkAce !== -1) {
-          playerHand[checkAce]=1
-          var sumOfCards = playerHand.reduce(function(acc, val) {
-              return acc += val;
-          }, 0)
-        }
-        // console.log(sumOfCards);
+        $('.split').hide(); // Split button is hidden by default until condition met
+
+        // Clear previous round's elements
+        $('.down').empty();
+        $('.dealer').empty();
+        $('.player').empty();
         $('.alert').empty();
-        $('.alert').append(sumOfCards)
-        // alert("you have " + sumOfCards);
-        if (sumOfCards > 21) {
-            // console.log('BUST!')
-            $('.alert').empty();
-            $('.alert').append("BUST")
-            $('.hit').hide();
-            $('.stick').hide();
-            // alert('BUST!')
-            // reduce the cards in the deck and re-deal or simply call new deck
+
+        deal(currentDeck);
+        bank -= currentBet; // Deduct bet from bank
+        updateBankDisplay(); // Function to update bank display (needs to be added)
+    }
+
+    // Deals initial two cards to player and dealer
+    function deal(deckToDeal) { // Renamed parameter for clarity
+        for (let i = 0; i < 4; i++) { // Deal 4 cards total (2 to player, 2 to dealer)
+            var card = deckToDeal[hitCard]; // Use hitCard to get the current card
+            if (i === 0) { // Dealer's up card
+                $('.dealer').append(`<img src ="${card.image}">`);
+                dealerHand.push(card);
+            } else if (i === 1) { // Dealer's down card
+                var cardBack = '<img class="down" src="pics/card_back.png">';
+                $('.down').append(`${cardBack}`);
+                dealerHand.push(card);
+            } else if (i === 2 || i === 3) { // Player's cards
+                $('.player').append(`<img src ="${card.image}">`);
+                playerHand.push(card);
+            }
+            hitCard++; // Increment index for the next card
         }
-        // bank=bank-1
-        // console.log(bank)
+
+        // Check for immediate Blackjacks
+        const playerHandValue = calculateHandValue(playerHand);
+        const dealerHandValue = calculateHandValue(dealerHand);
+
+        if (playerHandValue === 21 && dealerHandValue === 21) {
+            revealDealerCard();
+            $('.alert').empty().append('PUSH');
+            endRound('push'); // Pass outcome directly
+        } else if (playerHandValue === 21) {
+            revealDealerCard();
+            $('.alert').empty().append('BlackJack!! You Win!!');
+            endRound('blackjack'); // Pass outcome directly
+        } else if (dealerHandValue === 21) {
+            revealDealerCard();
+            $('.alert').empty().append('Dealer BlackJack');
+            endRound('dealer_blackjack'); // Pass outcome directly
+        }
+        // Show Double Down option if applicable (player has 11 on first two cards)
+        if (playerHandValue === 11 && dealerHandValue !== 21) { // Player can only double down on their first two cards
+             $('.double').show();
+             $('.double').click(function() {
+                 handleDoubleDown();
+             });
+        }
+        // Show Split button if player has two cards of the same rank
+        if (canSplit(playerHand)) {
+            $('.split').show();
+            // NOTE: Full split game logic (managing two hands) is not yet implemented.
+            // This only enables the button.
+            // $('.split').click(function() { /* Implement split logic here */ });
+        }
+    };
+
+    // Handles hitting for the player
+    $('.hit').click(function() {
+        $('.double').hide(); // Hide double down after player hits
+        hitMe(deck, playerHand, '.player'); // Use deck and playerHand
+        const currentHandValue = calculateHandValue(playerHand);
+        $('.alert').empty().append(currentHandValue);
+        if (currentHandValue > 21) {
+            $('.alert').empty().append("BUST");
+            endRound('player_bust');
+        }
     });
 
+    // Handles sticking for the player
     $('.stick').click(function() {
-        // console.log("you clicked stick");
-        stick(deck, dealerHand, playerHand);
         $('.hit').hide();
         $('.stick').hide();
-        // var sumOfDealerCards = dealerHand.reduce(function(acc,val){
-        //   return acc+=val
-        // },0)
-        // Alert("Dealer Has "+ sumOfDealerCards)
-        // $('.down').append(downCardPic)
-    })
+        $('.double').hide();
+        stick(deck, dealerHand, playerHand);
+    });
 
-    function stick(aDeck, dhand, phand) {
-        let i = 1;
-        let downCard = aDeck[i].image;
-        // console.log('down card image = ' + downCard);
-        $('.down').empty();
-
-        $('.dealer').append(`<img src =${downCard}>`);
-        let downCardVal = parseInt(aDeck[i].value, 10);
-        var sumOfDealerCards = dhand.reduce(function(acc, val) {
-            return acc += val;
-        }, 0);
-        $('.alert').empty();
-        $('.alert').append('Dealer has ' + sumOfDealerCards);
-        // alert("dealer has" + sumOfDealerCards);
-        // need to check to see who won in this case
-        while (sumOfDealerCards <= 16) {
-            // console.log(sumOfDealerCards)
-            sumOfDealerCards = dealerHit(aDeck, dhand)
-            checkSoft = $.inArray(11, dhand)
-
-            //draw a card function add to dealerHand sum and check again
+    // Handles doubling down
+    function handleDoubleDown() {
+        // Player hits one more card and then automatically sticks
+        hitMe(deck, playerHand, '.player'); // Use deck and playerHand
+        const playerHandValue = calculateHandValue(playerHand);
+        $('.alert').empty().append(playerHandValue);
+        if (playerHandValue > 21) {
+             $('.alert').empty().append("BUST");
+             endRound('player_bust');
+        } else {
+            stick(deck, dealerHand, playerHand); // Player automatically sticks after double down hit
         }
-
-        if (sumOfDealerCards > 21 && checkSoft !== -1) {
-            sumOfDealerCards = sumOfDealerCards - 10
-        }
-        sumOfPlayerCards = phand.reduce(function(acc, val) {
-            return acc += val;
-        }, 0)
-
-        if (sumOfDealerCards > 21) {
-            //need to check for soft numbers here
-            $('.alert').empty();
-            $('.alert').append('Dealer Busts! You Win!');
-        } else if (sumOfDealerCards === sumOfPlayerCards) {
-            $('.alert').empty();
-            $('.alert').append('Push')
-
-        } else if (sumOfDealerCards > sumOfPlayerCards) {
-            $('.alert').empty();
-            $('.alert').append('Dealer Wins!')
-
-
-        }
-
-        else if (sumOfDealerCards < sumOfPlayerCards) {
-          console.log('dealer sum ' + sumOfDealerCards);
-          console.log('player sum ' + sumOfPlayerCards);
-
-            $('.alert').empty();
-            $('.alert').append('Player Wins!')
-
-
-        }
-        // console.log('cards left in deck' + deck.length)
-        if (deck.length < 20) {
-            cardDraw(deckId)
-            alert('shuffling!!!')
-        }
-
-
-
     }
 
-
-    function hitMe(aDeck, hand) {
-        var cardPic = aDeck[hitCard].image;
-        // console.log(cardPic);
-        $('.player').append(`<img src =${cardPic}>`);
-
-        let newCard = parseInt(aDeck[hitCard].value, 10);
-        hand.push(newCard);
-        hitCard = hitCard + 1;
-        // console.log("index of next card = " + hitCard);
+    // Reveals the dealer's hidden card
+    function revealDealerCard() {
+        if (deck.length > 1 && hitCard < deck.length) { // Ensure card is available
+             let hiddenCard = deck[1]; // Assuming deck[1] is the hidden card based on deal loop index
+             $('.down').empty().append(`<img src ="${hiddenCard.image}">`);
+        }
     }
 
+    // Dealer hits to reach at least 17
     function dealerHit(aDeck, dhand) {
-        var dealerHitPic = aDeck[hitCard].image;
-        // console.log("dealer hit card = " + dealerHitPic);
-        $('.dealer').append(`<img src =${dealerHitPic}>`);
-        let newCard = parseInt(aDeck[hitCard].value, 10);
-        dhand.push(newCard)
-        hitCard = hitCard + 1
-        // console.log('dealer hand is = ' + dhand)
-        var sumOfDealerCards = dhand.reduce(function(acc, val) {
-            return acc += val;
-        }, 0);
-        if (newCard === 11 && sumOfDealerCards > 21) {
-            sumOfDealerCards = sumOfDealerCards - 10
+        if (hitCard >= aDeck.length) { // Safety check: If we somehow run out of cards
+            console.error("Ran out of cards in the deck!");
+            return calculateHandValue(dhand); // Return current value to avoid error
         }
-        $('.alert').empty();
-        $('.alert').append('Dealer has ' + sumOfDealerCards)
-        // alert("dealer has " + sumOfDealerCards)
+        var card = aDeck[hitCard];
+        $('.dealer').append(`<img src ="${card.image}">`);
+        dhand.push(card);
+        hitCard++; // Increment index for the next card
+        var sumOfDealerCards = calculateHandValue(dhand);
+        $('.alert').empty().append('Dealer has ' + sumOfDealerCards);
         return sumOfDealerCards;
     }
 
-    // function endHand(){
-    //   if(sumOfCards>sumOfDealerCards){
-    //     console.log('you win '+sumOfCards+' to '+sumOfDealerCards)
-    //   }
-    // }
-    // function bust(){
-    //   //will show either the player or the dealer win, depending on who busted
-    // }
-    // function winner(){
-    //   //compares the sum of player hand and the sum of the dealer hand and determines winner
-    //   //gives indication of who won
-    // }
+    // Logic when player chooses to stick
+    function stick(aDeck, dhand, phand) {
+        revealDealerCard(); // Reveal dealer's hidden card
 
+        var sumOfDealerCards = calculateHandValue(dhand);
+        $('.alert').empty().append('Dealer has ' + sumOfDealerCards);
+
+        // Dealer hits until score is 17 or more
+        while (sumOfDealerCards <= 16) {
+            sumOfDealerCards = dealerHit(aDeck, dhand);
+        }
+
+        // Determine the outcome after dealer sticks or busts
+        endRound(determineOutcome(calculateHandValue(phand), sumOfDealerCards));
+    }
+
+    // Determines the outcome of the round
+    function determineOutcome(playerScore, dealerScore) {
+        if (playerScore > 21) return 'player_bust';
+        if (dealerScore > 21) return 'player_win'; // Dealer busts
+        if (playerScore === dealerScore) return 'push';
+        // Blackjack checks are now handled in deal() for initial hands
+        if (playerScore > dealerScore) return 'player_win';
+        if (dealerScore > playerScore) return 'dealer_win';
+        return 'push'; // Default to push if somehow not covered
+    }
+
+    // Ends the round, updates bankroll, and resets for next round
+    function endRound(outcome) {
+        let payout = 0;
+        let alertMessage = '';
+
+        switch (outcome) {
+            case 'player_win':
+                payout = currentBet;
+                alertMessage = ' You Win!';
+                break;
+            case 'blackjack':
+                payout = currentBet * 1.5; // 3:2 payout
+                alertMessage = ' Blackjack!';
+                break;
+            case 'dealer_win':
+                payout = -currentBet;
+                alertMessage = ' Dealer Wins!';
+                break;
+            case 'push':
+                payout = 0; // Bet is returned
+                alertMessage = ' Push!';
+                break;
+            case 'player_bust':
+            case 'dealer_blackjack': // Assuming player didn't also have blackjack for this case
+                payout = -currentBet;
+                break;
+        }
+
+        bank += payout;
+        updateBankDisplay(); // Update the displayed bankroll
+
+        $('.alert').append(alertMessage);
+
+        // Hide action buttons and show bet buttons for next round
+        $('.hit').hide();
+        $('.stick').hide();
+        $('.double').hide();
+        $('.split').hide(); // Hide split if not implemented
+
+        // Prepare for next bet
+        $('.one').show();
+        $('.five').show();
+
+        // Check if deck needs reshuffling for next round
+        if (hitCard >= deck.length - 20) { // Check if fewer than 20 cards are left
+            alert('Reshuffling deck...');
+            // Reshuffle the current deck using the same deckId
+            $.get('https://deckofcardsapi.com/api/deck/' + deckId + '/shuffle/').done(function(shuffleResponse) {
+                if (shuffleResponse.success) {
+                    hitCard = 0; // Reset index after successful shuffle
+                } else {
+                    console.error("Failed to reshuffle deck:", shuffleResponse);
+                    // Handle failure: maybe fetch a new deck or alert user
+                }
+            });
+        }
+    }
+
+    // Function to update the bankroll display on the page
+    function updateBankDisplay() {
+        // Example: If you have an HTML element like <span class="bank-display"></span>
+        // $('.bank-display').text(`Bank: $${bank}`);
+        console.log(`Current bank: $${bank}`); // Log to console if no display element
+    }
+
+    // Initial call to update bank display when page loads
+    updateBankDisplay();
 });
