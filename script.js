@@ -5,14 +5,12 @@ $(document).ready(function() {
     $('.stick').hide();
     var cardObj = {};
     var theDeck;
-    // var cardCalled; // Unused variable
     var cardImage;
     var hitCard = 0; // Index for the next card to draw from the deck array
     var playerHand;
     var dealerHand;
     var deck; // Array containing card objects
     var deckId; // The ID of the current deck from the API
-    // var checkSoft; // Declared but not actively used in current logic, potentially for future Ace handling.
 
     var bank = 1000; // Initial bankroll
     var currentBet = 0; // To store the current bet for the round
@@ -163,13 +161,7 @@ $(document).ready(function() {
     // Handles hitting for the player
     $('.hit').click(function() {
         $('.double').hide(); // Hide double down after player hits
-        hitMe(deck, playerHand, '.player'); // Use deck and playerHand
-        const currentHandValue = calculateHandValue(playerHand);
-        $('.alert').empty().append(currentHandValue);
-        if (currentHandValue > 21) {
-            $('.alert').empty().append("BUST");
-            endRound('player_bust');
-        }
+        hitMe(deck, playerHand); // Call hitMe, which now handles alert/bust check
     });
 
     // Handles sticking for the player
@@ -183,7 +175,7 @@ $(document).ready(function() {
     // Handles doubling down
     function handleDoubleDown() {
         // Player hits one more card and then automatically sticks
-        hitMe(deck, playerHand, '.player'); // Use deck and playerHand
+        hitMe(deck, playerHand); // Use deck and playerHand
         const playerHandValue = calculateHandValue(playerHand);
         $('.alert').empty().append(playerHandValue);
         if (playerHandValue > 21) {
